@@ -57,8 +57,14 @@ mount_bind_ro /firmware $LXC_ROOTFS_PATH/firmware
 mount_bind_ro /system/etc $LXC_ROOTFS_PATH/etc
 mount_bind_ro /usr/libexec/hal-droid $LXC_ROOTFS_PATH/hal-hybris
 
+# use existing /persist directory, if any
+if [ -d /persist ] ; then
+  mkdir -p $LXC_ROOTFS_PATH/persist
+  mount --bind /persist $LXC_ROOTFS_PATH/persist
+fi
+
 # usage existing /data directory
-mkdir -p /data
+mkdir -p $LXC_ROOTFS_PATH/data
 mount -o bind /data $LXC_ROOTFS_PATH/data
 
 # Avoid being spammed with "missing packages.list; retrying"
