@@ -17,12 +17,12 @@ TAGS_RAM_BASE = "0x02700000"
 inherit kernel_android
 
 SRC_URI = " \
-  git://github.com/Tofee/android_kernel_lge_hammerhead.git;protocol=git;branch=hammerhead/3.4/cm-12.1 \
+  git://github.com/Tofee/android_kernel_lge_hammerhead.git;protocol=git;branch=hammerhead/3.4/cm-13.0 \
   file://defconfig \
 "
 S = "${WORKDIR}/git"
 
-SRCREV = "8fd41b63491f3512ce7ee536d080d90facb57f45"
+SRCREV = "cf678109aec7a593a174fd51818d416b6ac300cf"
 
 KV = "3.4.0"
 PV = "${KV}+gitr${SRCPV}"

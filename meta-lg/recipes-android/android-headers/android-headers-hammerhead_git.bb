@@ -4,7 +4,7 @@ PV = "5.1.0+gitr${SRCPV}"
 SRCREV = "957ab6e28aea03d0cf6495f33ade9ddfff480ccc"
 
 SRC_URI = "git://git.launchpad.net/android-headers;branch=master;protocol=git"
-ANDROID_API = "22"
+ANDROID_API = "23"
 S = "${WORKDIR}/git/${ANDROID_API}"
 
 COMPATIBLE_MACHINE = "^hammerhead$"
