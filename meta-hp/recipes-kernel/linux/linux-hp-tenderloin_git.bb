@@ -6,12 +6,12 @@ DESCRIPTION = "Linux kernel for HP Touchpad"
 COMPATIBLE_MACHINE = "tenderloin"
 
 SRC_URI = " \
-  git://github.com/shr-distribution/linux.git;branch=tenderloin/3.4/cm-12.1 \
+  git://github.com/Tofee/linux-kernel.git;branch=tenderloin/tofe/bt-patch \
   file://defconfig \
 "
 S = "${WORKDIR}/git"
 
-SRCREV = "56b402673a191a25f3bc211dfa37124f0c0fc6d8"
+SRCREV = "2ae1dcfb09171e7f5acbb41c3a141843612ffe14"
 
 do_compile[depends] += "initramfs-android-image:do_image_complete"
 DEPENDS += "u-boot-mkimage-native initramfs-android-image"
