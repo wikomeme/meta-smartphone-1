@@ -1,0 +1,141 @@
+From 3f48105edfea0bad50cf27645110eeca6c3b9703 Mon Sep 17 00:00:00 2001
+From: Christophe Chapuis <chris.chapuis@gmail.com>
+Date: Thu, 17 May 2018 19:40:37 +0000
+Subject: [PATCH 1/2] Add pid and mount namespaces
+
+---
+ fs/namespace.c          | 75 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/proc/namespaces.c    |  4 +++
+ include/linux/proc_fs.h |  2 ++
+ kernel/pid_namespace.c  |  3 --
+ 4 files changed, 81 insertions(+), 3 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 1200e29..15ac21f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -19,6 +19,7 @@
+ #include <linux/ramfs.h>	/* init_rootfs */
+ #include <linux/fs_struct.h>	/* get_fs_root et.al. */
+ #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
++#include <linux/proc_fs.h>
+ #include <linux/uaccess.h>
+ #include "pnode.h"
+ #include "internal.h"
+@@ -2607,6 +2626,62 @@ void put_mnt_ns(struct mnt_namespace *ns)
+ 	kfree(ns);
+ }
+ 
++EXPORT_SYMBOL(put_mnt_ns);
++
++static void *mntns_get(struct task_struct *task)
++{
++   struct mnt_namespace *ns;
++   rcu_read_lock();
++   ns = task->nsproxy->mnt_ns;
++   get_mnt_ns(ns);
++   rcu_read_unlock();
++   return ns;
++}
++
++static void mntns_put(void *ns)
++{
++   put_mnt_ns(ns);
++}
++
++static int mntns_install(struct nsproxy *nsproxy, void *ns)
++{
++   struct fs_struct *fs = current->fs;
++   struct mnt_namespace *mnt_ns = ns;
++   struct path root;
++
++   if (fs->users != 1)
++       return -EINVAL;
++
++   get_mnt_ns(mnt_ns);
++   put_mnt_ns(nsproxy->mnt_ns);
++   nsproxy->mnt_ns = mnt_ns;
++
++   /* Find the root */
++   root.mnt    = &(mnt_ns->root->mnt);
++   root.dentry = mnt_ns->root->mnt_mountpoint;
++   path_get(&root);
++   while(d_mountpoint(root.dentry) && follow_down(&root))
++       ;
++
++   /* Update the pwd and root */
++   path_get(&root);
++   path_get(&root);
++   path_put(&fs->root);
++   path_put(&fs->pwd);
++   fs->root = root;
++   fs->pwd  = root;
++   path_put(&root);
++
++   return 0;
++}
++
++const struct proc_ns_operations mntns_operations = {
++   .name       = "mnt",
++   .get        = mntns_get,
++   .put        = mntns_put,
++   .install    = mntns_install,
++};
++
+ struct vfsmount *kern_mount_data(struct file_system_type *type, void *data)
+ {
+ 	struct vfsmount *mnt;
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index 0d9e23a..e562b76 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -18,12 +18,16 @@ static const struct proc_ns_operations *ns_entries[] = {
+ #ifdef CONFIG_NET_NS
+ 	&netns_operations,
+ #endif
++#ifdef CONFIG_PID_NS
++	&pidns_operations,
++#endif
+ #ifdef CONFIG_UTS_NS
+ 	&utsns_operations,
+ #endif
+ #ifdef CONFIG_IPC_NS
+ 	&ipcns_operations,
+ #endif
++	&mntns_operations,
+ };
+ 
+ static const struct file_operations ns_file_operations = {
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 85c5073..21f5ff7 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -251,6 +251,8 @@ struct proc_ns_operations {
+ extern const struct proc_ns_operations netns_operations;
+ extern const struct proc_ns_operations utsns_operations;
+ extern const struct proc_ns_operations ipcns_operations;
++extern const struct proc_ns_operations pidns_operations;
++extern const struct proc_ns_operations mntns_operations;
+ 
+ union proc_op {
+ 	int (*proc_get_link)(struct dentry *, struct path *);
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 6203996..691aa5d 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -268,12 +268,9 @@ static void pidns_put(void *ns)
+ 
+ static int pidns_install(struct nsproxy *nsproxy, void *ns)
+ {
+-	return -EINVAL;
+-#ifdef notyet
+ 	put_pid_ns(nsproxy->pid_ns);
+ 	nsproxy->pid_ns = get_pid_ns(ns);
+ 	return 0;
+-#endif
+ }
+ 
+ const struct proc_ns_operations pidns_operations = {
+-- 
+2.7.4
+
