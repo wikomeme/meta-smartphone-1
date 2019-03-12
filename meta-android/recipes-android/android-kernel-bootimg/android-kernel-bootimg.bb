@@ -14,27 +14,25 @@ ANDROID_BOOTIMG_TAGS_RAM_BASE ?= "0x00000000"
 ANDROID_BOOTIMG_EXTRA_ABOOTIMG_ARGS ?= ""
 KERNEL_IMAGEDEST ?= "boot"
 KERNEL_IMAGETYPES ?= "${KERNEL_IMAGETYPE}"
-KERNEL_IMAGE_WITH_DTB ?= "${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}"
 
 DEPENDS = "initramfs-android-image virtual/kernel"
 DEPENDS += "abootimg-native"
-
-RDEPENDS_${PN} += "abootimg"
 
 inherit deploy
 do_deploy[vardepsexclude] = "KERNEL_IMAGE_BASE_NAME"
 do_compile[depends] += "initramfs-android-image:do_image_complete virtual/kernel:do_deploy"
 
 do_compile() {
+    kernel_with_dtb="${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}"
 
     # Handle the case when adding a dtb is needed
     if [ -n "${KERNEL_DEVICETREE}" ] ; then
-        KERNEL_IMAGE_WITH_DTB="${B}/zImage-dtb"
-      cat ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE} ${DEPLOY_DIR_IMAGE}/${KERNEL_DEVICETREE} > ${KERNEL_IMAGE_WITH_DTB}
+        kernel_with_dtb="${B}/zImage-dtb"
+        cat ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE} ${DEPLOY_DIR_IMAGE}/${KERNEL_DEVICETREE} > ${kernel_with_dtb}
     fi
 
     abootimg --create ${B}/boot.img \
-             -k ${KERNEL_IMAGE_WITH_DTB} \
+             -k ${kernel_with_dtb} \
              -r ${DEPLOY_DIR_IMAGE}/initramfs-android-image-${MACHINE}.cpio.gz \
              -c "cmdline=${ANDROID_BOOTIMG_CMDLINE}" \
              -c "kerneladdr=${ANDROID_BOOTIMG_KERNEL_RAM_BASE}" \
