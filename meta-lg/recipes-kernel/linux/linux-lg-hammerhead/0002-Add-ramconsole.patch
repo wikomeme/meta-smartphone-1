@@ -1,5 +1,22 @@
+From 5c9b1a97fb605de0ba6b0a24215fa5da652c1eb8 Mon Sep 17 00:00:00 2001
+From: Christophe Chapuis <chris.chapuis@gmail.com>
+Date: Tue, 12 Mar 2019 20:59:31 +0000
+
+---
+ drivers/android/Kconfig          |  16 ++
+ drivers/android/Makefile         |   3 +
+ drivers/android/persistent_ram.c | 477 +++++++++++++++++++++++++++++++
+ drivers/android/persistent_ram.h |  83 ++++++
+ drivers/android/ram_console.c    |  89 ++++++
+ drivers/android/ram_console.h    |  22 ++
+ 6 files changed, 690 insertions(+)
+ create mode 100644 drivers/android/persistent_ram.c
+ create mode 100644 drivers/android/persistent_ram.h
+ create mode 100644 drivers/android/ram_console.c
+ create mode 100644 drivers/android/ram_console.h
+
 diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
-index 4c190f8d1f4c..a21346232990 100644
+index 7dce3795b887..5b1da6578f03 100644
 --- a/drivers/android/Kconfig
 +++ b/drivers/android/Kconfig
 @@ -8,6 +8,22 @@ config ANDROID
@@ -24,13 +41,13 @@ index 4c190f8d1f4c..a21346232990 100644
 +
  config ANDROID_BINDER_IPC
  	bool "Android Binder IPC Driver"
- 	depends on MMU && !CPU_CACHE_VIVT
+ 	depends on MMU
 diff --git a/drivers/android/Makefile b/drivers/android/Makefile
-index c7856e3200da..94953a07cbbf 100644
+index a01254c43ee3..fdf9fb903875 100644
 --- a/drivers/android/Makefile
 +++ b/drivers/android/Makefile
-@@ -3,3 +3,6 @@ ccflags-y += -I$(src)			# needed for trace events
- obj-$(CONFIG_ANDROID_BINDERFS)		+= binderfs.o
+@@ -2,3 +2,6 @@ ccflags-y += -I$(src)			# needed for trace events
+ 
  obj-$(CONFIG_ANDROID_BINDER_IPC)	+= binder.o binder_alloc.o
  obj-$(CONFIG_ANDROID_BINDER_IPC_SELFTEST) += binder_alloc_selftest.o
 +

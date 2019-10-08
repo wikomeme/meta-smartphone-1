@@ -1,3 +1,11 @@
+From 9fba492b423c8adcd72727e0b2f67136526d68b8 Mon Sep 17 00:00:00 2001
+From: Christophe Chapuis <chris.chapuis@gmail.com>
+Date: Fri, 8 Mar 2019 21:41:08 +0000
+
+---
+ drivers/video/backlight/lm3630a_bl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
 diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
 index 394deb4f5fde..ba24734f4354 100644
 --- a/drivers/video/backlight/lm3630a_bl.c

@@ -1,4 +1,4 @@
-require recipes-kernel/linux/linux.inc
+require recipes-kernel/linux/linux-yocto.inc
 
 SECTION = "kernel"
 
@@ -17,17 +17,17 @@ ANDROID_BOOTIMG_TAGS_RAM_BASE = "0x02700000"
 
 inherit kernel_android
 
+KBUILD_DEFCONFIG_hammerhead = "qcom_defconfig"
+
 SRC_URI = " \
-  git://gitlab.com/postmarketOS/linux-postmarketos.git;branch=postmarketos-linux-qcom \
-  file://0001-Fix-Hammerhead-backlight.patch \
+  git://github.com/masneyb/linux.git;branch=v5.2-nexus5-display \
   file://0002-Add-ramconsole.patch \
-  file://defconfig \
 "
 S = "${WORKDIR}/git"
 
-SRCREV = "e9fc9b4e4a83c8a9fba2230ac91d5c75b9fcd4d8"
+SRCREV = "33fee68163e501634338b40aac2ebe279bf7787b"
 
-KV = "4.17"
+KV = "5.2"
 PV = "${KV}+gitr${SRCPV}"
 # for bumping PR bump MACHINE_KERNEL_PR in the machine config
 inherit machine_kernel_pr
