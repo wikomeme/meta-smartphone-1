@@ -9,23 +9,23 @@ DESCRIPTION = "Kernel close to upstream with device specific patches intented to
  Maintained by the PostmarketOS team."
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-ANDROID_BOOTIMG_CMDLINE = "androidboot.hardware=hammerhead user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1"
+#ANDROID_BOOTIMG_CMDLINE = "msm.vram=200m cma=300m g_mass_storage.removable=y LUNEOS_NO_OUTPUT_REDIRECT g_ffs.idVendor=0x18d1 g_ffs.idProduct=0xd001"
+ANDROID_BOOTIMG_CMDLINE = "LUNEOS_NO_OUTPUT_REDIRECT user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1 msm.vram=300m cma=500m"
 ANDROID_BOOTIMG_KERNEL_RAM_BASE = "0x00008000"
 ANDROID_BOOTIMG_RAMDISK_RAM_BASE = "0x02900000"
 ANDROID_BOOTIMG_SECOND_RAM_BASE = "0x00f00000"
 ANDROID_BOOTIMG_TAGS_RAM_BASE = "0x02700000"
 
 inherit kernel_android
-
-KBUILD_DEFCONFIG_hammerhead = "qcom_defconfig"
+LINUX_VERSION_EXTENSION = "-luneos"
 
 SRC_URI = " \
-  git://github.com/masneyb/linux.git;branch=v5.2-nexus5-display \
-  file://0002-Add-ramconsole.patch \
+  git://github.com/Tofee/linux-mainline-msm.git;branch=v5.2-hammerhead \
+  file://defconfig \
 "
 S = "${WORKDIR}/git"
 
-SRCREV = "33fee68163e501634338b40aac2ebe279bf7787b"
+SRCREV = "631f73eae6ac7fbe666394a45e47d38b68465dd0"
 
 KV = "5.2"
 PV = "${KV}+gitr${SRCPV}"
