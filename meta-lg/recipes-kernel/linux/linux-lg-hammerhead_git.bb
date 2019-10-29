@@ -10,7 +10,7 @@ DESCRIPTION = "Kernel close to upstream with device specific patches intented to
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 #ANDROID_BOOTIMG_CMDLINE = "msm.vram=200m cma=300m g_mass_storage.removable=y LUNEOS_NO_OUTPUT_REDIRECT g_ffs.idVendor=0x18d1 g_ffs.idProduct=0xd001"
-ANDROID_BOOTIMG_CMDLINE = "LUNEOS_NO_OUTPUT_REDIRECT user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1 msm.vram=300m cma=500m"
+ANDROID_BOOTIMG_CMDLINE = "LUNEOS_NO_OUTPUT_REDIRECT user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1 msm.vram=300m cma=500m pty.legacy_count=8"
 ANDROID_BOOTIMG_KERNEL_RAM_BASE = "0x00008000"
 ANDROID_BOOTIMG_RAMDISK_RAM_BASE = "0x02900000"
 ANDROID_BOOTIMG_SECOND_RAM_BASE = "0x00f00000"
