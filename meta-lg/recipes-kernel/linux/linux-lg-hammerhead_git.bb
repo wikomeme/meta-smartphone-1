@@ -20,14 +20,15 @@ inherit kernel_android
 LINUX_VERSION_EXTENSION = "-luneos"
 
 SRC_URI = " \
-  git://github.com/Tofee/linux-mainline-msm.git;branch=v5.2-hammerhead \
-  file://defconfig \
+    git://github.com/Tofee/linux-mainline-msm.git;branch=v5.5-nexus5 \
+    file://reversed-disable-gold-linker.patch \
+    file://defconfig \
 "
 S = "${WORKDIR}/git"
 
-SRCREV = "eb72ed67185c4cf2d60f5f2024f783765758f092"
+SRCREV = "c5ed0a1bf561cacd0fd5a3450ddfb1c6eab33ab2"
 
-KV = "5.2"
+KV = "5.5"
 PV = "${KV}+gitr${SRCPV}"
 # for bumping PR bump MACHINE_KERNEL_PR in the machine config
 inherit machine_kernel_pr
