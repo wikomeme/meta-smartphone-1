@@ -1,0 +1,68 @@
+From 8c3b71e4021f5d1d859233b66cb413d3aba0f2fe Mon Sep 17 00:00:00 2001
+From: Fathi Boudra <fabo@debian.org>
+Date: Wed, 7 Sep 2016 12:58:47 +0300
+Subject: [PATCH 09/10] Remove bionic specific calls
+
+Upstream-Status: Inappropriate
+---
+ include/cutils/properties.h | 1 -
+ libcutils/properties.c      | 2 ++
+ liblog/logd_writer.c        | 5 +++++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/include/cutils/properties.h b/include/cutils/properties.h
+index 24aa224f64..862651d80f 100644
+--- a/include/cutils/properties.h
++++ b/include/cutils/properties.h
+@@ -19,7 +19,6 @@
+ 
+ #include <sys/cdefs.h>
+ #include <stddef.h>
+-#include <sys/system_properties.h>
+ #include <stdint.h>
+ 
+ #ifdef __cplusplus
+diff --git a/libcutils/properties.c b/libcutils/properties.c
+index 4e46e02f6d..7c0cffce5d 100644
+--- a/libcutils/properties.c
++++ b/libcutils/properties.c
+@@ -104,6 +104,7 @@ int32_t property_get_int32(const char *key, int32_t default_value) {
+     return (int32_t)property_get_imax(key, INT32_MIN, INT32_MAX, default_value);
+ }
+ 
++#if 0
+ #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
+ #include <sys/_system_properties.h>
+ 
+@@ -154,3 +155,4 @@ int property_list(
+     struct property_list_callback_data data = { propfn, cookie };
+     return __system_property_foreach(property_list_callback, &data);
+ }
++#endif
+diff --git a/liblog/logd_writer.c b/liblog/logd_writer.c
+index 059f170340..ec625922fd 100644
+--- a/liblog/logd_writer.c
++++ b/liblog/logd_writer.c
+@@ -25,6 +25,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
++#include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <sys/un.h>
+@@ -157,7 +158,11 @@ static int logdWrite(log_id_t logId, struct timespec *ts,
+      *  };
+      */
+ 
++#ifdef __BIONIC__
+     header.tid = gettid();
++#else
++    header.tid = (pid_t) syscall(__NR_gettid);
++#endif
+     header.realtime.tv_sec = ts->tv_sec;
+     header.realtime.tv_nsec = ts->tv_nsec;
+ 
+-- 
+2.17.0
+

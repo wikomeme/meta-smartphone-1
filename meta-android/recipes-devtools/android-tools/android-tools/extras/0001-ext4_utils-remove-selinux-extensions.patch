@@ -1,0 +1,29 @@
+From 171828206691ec86ee43d6e2a28f025c007c149a Mon Sep 17 00:00:00 2001
+From: Sergio Schvezov <sergio.schvezov@canonical.com>
+Date: Tue, 2 Oct 2018 16:36:54 +0000
+Subject: [PATCH 1/2] ext4_utils: remove selinux extensions
+
+* drop useless includes of Android SELINUX extensions
+* avoids having to clone another module
+* this should be sent upstream
+
+Upstream-Status: Inappropriate
+---
+ ext4_utils/make_ext4fs_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/ext4_utils/make_ext4fs_main.c b/ext4_utils/make_ext4fs_main.c
+index 323a445b4..6ca76c04a 100644
+--- a/ext4_utils/make_ext4fs_main.c
++++ b/ext4_utils/make_ext4fs_main.c
+@@ -34,7 +34,6 @@
+ #include <selinux/selinux.h>
+ #include <selinux/label.h>
+ #if !defined(HOST)
+-#include <selinux/android.h>
+ #endif
+ #else
+ struct selabel_handle;
+-- 
+2.17.0
+

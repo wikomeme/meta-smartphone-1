@@ -1,0 +1,53 @@
+From 2d83adbf392e88afb25e68653a1416e6e85ab33c Mon Sep 17 00:00:00 2001
+From: Fathi Boudra <fabo@debian.org>
+Date: Wed, 7 Sep 2016 12:58:47 +0300
+Subject: [PATCH 10/10] Fix implicit declaration of stlcat/strlcopy functions
+
+Upstream-Status: Inappropriate
+---
+ adb/adb.cpp              | 1 +
+ fs_mgr/fs_mgr_fstab.c    | 2 +-
+ include/cutils/sockets.h | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/adb/adb.cpp b/adb/adb.cpp
+index e0c05039db..122ff66a1f 100644
+--- a/adb/adb.cpp
++++ b/adb/adb.cpp
+@@ -29,6 +29,7 @@
+ #include <string.h>
+ #include <sys/time.h>
+ #include <time.h>
++#include <grp.h>
+ 
+ #include <string>
+ #include <vector>
+diff --git a/fs_mgr/fs_mgr_fstab.c b/fs_mgr/fs_mgr_fstab.c
+index 9225d349f0..15c008eac5 100644
+--- a/fs_mgr/fs_mgr_fstab.c
++++ b/fs_mgr/fs_mgr_fstab.c
+@@ -18,7 +18,7 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <string.h>
++#include <bsd/string.h>
+ #include <sys/mount.h>
+ #include <unistd.h>
+ 
+diff --git a/include/cutils/sockets.h b/include/cutils/sockets.h
+index 783bd0bea3..555b8f1a3f 100644
+--- a/include/cutils/sockets.h
++++ b/include/cutils/sockets.h
+@@ -20,7 +20,7 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <string.h>
++#include <bsd/string.h>
+ #include <stdbool.h>
+ 
+ #if defined(_WIN32)
+-- 
+2.17.0
+

@@ -1,0 +1,82 @@
+From 376fe82ff50a9a41c28fc95b030d0def41ba4730 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Fri, 15 Sep 2017 15:50:57 -0700
+Subject: [PATCH 05/10] adb: Musl fixes
+
+__nonnull is gcc specific
+include sys/types.h for size_t
+Do not redefine close() and lseek()
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ adb/framebuffer_service.cpp |  8 ++++----
+ adb/sysdeps.h               | 12 ++++++------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/adb/framebuffer_service.cpp b/adb/framebuffer_service.cpp
+index 7baad8b725..a144256afa 100644
+--- a/adb/framebuffer_service.cpp
++++ b/adb/framebuffer_service.cpp
+@@ -14,6 +14,10 @@
+  * limitations under the License.
+  */
+ 
++#include "fdevent.h"
++#include "adb.h"
++#include "sysdeps.h"
++
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/fb.h>
+@@ -26,11 +30,7 @@
+ #include <sys/wait.h>
+ #include <unistd.h>
+ 
+-#include "sysdeps.h"
+-
+-#include "adb.h"
+ #include "adb_io.h"
+-#include "fdevent.h"
+ 
+ /* TODO:
+ ** - sync with vsync to avoid tearing
+diff --git a/adb/sysdeps.h b/adb/sysdeps.h
+index bd19f88cde..212b3923f6 100644
+--- a/adb/sysdeps.h
++++ b/adb/sysdeps.h
+@@ -225,8 +225,8 @@ static __inline__ int  unix_close(int fd)
+ {
+     return close(fd);
+ }
+-#undef   close
+-#define  close   ____xxx_close
++//#undef   close
++//#define  close   ____xxx_close
+ 
+ // Like unix_read(), but may return EINTR.
+ extern int  unix_read_interruptible(int  fd, void*  buf, size_t  len);
+@@ -559,8 +559,8 @@ static __inline__ int  adb_shutdown(int fd, int direction)
+ __inline__ int adb_close(int fd) {
+     return close(fd);
+ }
+-#undef   close
+-#define  close   ____xxx_close
++//#undef   close
++//#define  close   ____xxx_close
+ 
+ 
+ static __inline__  int  adb_read(int  fd, void*  buf, size_t  len)
+@@ -573,8 +573,8 @@ static __inline__ int unix_read_interruptible(int fd, void* buf, size_t len) {
+     return read(fd, buf, len);
+ }
+ 
+-#undef   read
+-#define  read  ___xxx_read
++//#undef   read
++//#define  read  ___xxx_read
+ 
+ static __inline__  int  adb_write(int  fd, const void*  buf, size_t  len)
+ {
+-- 
+2.17.0
+

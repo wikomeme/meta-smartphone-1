@@ -1,0 +1,29 @@
+From 20ac55ca15cf8b9f5d69b23bebcedea823b038b0 Mon Sep 17 00:00:00 2001
+From: Fathi Boudra <fabo@debian.org>
+Date: Wed, 7 Sep 2016 12:58:47 +0300
+Subject: [PATCH 02/10] adb: define shell command
+
+we intend to run on Linux system so the shell is always /bin/sh,
+for the host or the target.
+
+Upstream-Status: Inappropriate
+---
+ run-as/run-as.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/run-as/run-as.c b/run-as/run-as.c
+index f0fd2fe7c6..8ebee8056d 100644
+--- a/run-as/run-as.c
++++ b/run-as/run-as.c
+@@ -218,7 +218,7 @@ int main(int argc, char **argv)
+     }
+ 
+     /* Default exec shell. */
+-    execlp("/system/bin/sh", "sh", NULL);
++    execlp("/bin/sh", "sh", NULL);
+ 
+     panic("exec failed: %s\n", strerror(errno));
+ }
+-- 
+2.17.0
+
